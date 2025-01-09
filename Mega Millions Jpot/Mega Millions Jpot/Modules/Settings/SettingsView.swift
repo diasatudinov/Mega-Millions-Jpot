@@ -1,4 +1,13 @@
+//
+//  SettingsView.swift
+//  Mega Millions Jpot
+//
+//  Created by Dias Atudinov on 09.01.2025.
+//
+
+
 import SwiftUI
+import StoreKit
 
 struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode
@@ -6,11 +15,14 @@ struct SettingsView: View {
     var body: some View {
         ZStack {
             
-            VStack {
+            VStack(spacing: 0)  {
                 ZStack {
                     HStack {
                         Spacer()
-                        TextWithBorder(text: "Settings", font: .custom(Fonts.mazzardM.rawValue, size: 55), textColor: .mainYellow, borderColor: .mainBrown, borderWidth: 2)
+                        
+                        Text("Settings")
+                            .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 60:35))
+                            .foregroundStyle(.yellow)
                             .textCase(.uppercase)
                         
                         Spacer()
@@ -24,81 +36,122 @@ struct SettingsView: View {
                                     .resizable()
                                     .scaledToFit()
                                 
-                            }.frame(height: 65)
+                            }.frame(height: 50)
                             
                         }
                         Spacer()
-                    }.padding()
+                    }.padding([.leading, .top])
                 }
-                
-                VStack(spacing: 30) {
-                    ZStack {
+                Spacer()
+                VStack(spacing: 16) {
+
+                    VStack(spacing: 10)  {
                         
-                        Image(.settingsBg)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: DeviceInfo.shared.deviceType == .pad ? 160:80)
+                        Text("music")
+                            .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 60:30))
+                            .foregroundStyle(.gold)
                         
                         HStack(spacing: 16) {
-                            TextWithBorder(text: "SOUND", font: .custom(Fonts.mazzardM.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 60:30), textColor: .mainYellow, borderColor: .mainBrown, borderWidth: 2)
-                                .textCase(.uppercase)
                             Button {
-                                settings.soundEnabled.toggle()
+                                settings.musicEnabled = true
                             } label: {
-                                if settings.soundEnabled {
+                                if settings.musicEnabled {
+                                    Image(.onS)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 120:60)
+                                } else {
                                     Image(.on)
                                         .resizable()
                                         .scaledToFit()
-                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 60:30)
-                                } else {
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 120:60)
+                                }
+                            }
+                            
+                            Button {
+                                settings.musicEnabled = false
+                            } label: {
+                                if settings.musicEnabled {
                                     Image(.off)
                                         .resizable()
                                         .scaledToFit()
-                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 60:30)
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 120:60)
+                                } else {
+                                    Image(.offS)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 120:60)
                                 }
                             }
                             
                         }
                     }
                    
-                    ZStack {
+                    VStack(spacing: 10)  {
                         
-                        Image(.settingsBg)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: DeviceInfo.shared.deviceType == .pad ? 160:80)
+                        Text("vibration")
+                            .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 60 :30))
+                            .foregroundStyle(.gold)
+                        
                         HStack(spacing: 16) {
-                            TextWithBorder(text: "MUSIC", font: .custom(Fonts.mazzardM.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 60:30), textColor: .mainYellow, borderColor: .mainBrown, borderWidth: 2)
-                                .textCase(.uppercase)
                             Button {
-                                settings.musicEnabled.toggle()
+                                settings.soundEnabled = true
                             } label: {
-                                if settings.musicEnabled {
+                                if settings.soundEnabled {
+                                    Image(.onS)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 120:60)
+                                } else {
                                     Image(.on)
                                         .resizable()
                                         .scaledToFit()
-                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 60:30)
-                                } else {
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 120:60)
+                                }
+                            }
+                            
+                            Button {
+                                settings.soundEnabled = false
+                            } label: {
+                                if settings.soundEnabled {
                                     Image(.off)
                                         .resizable()
                                         .scaledToFit()
-                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 60:30)
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 120:60)
+                                } else {
+                                    Image(.offS)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 120:60)
                                 }
                             }
+                            
                         }
-                    }.padding(.bottom, 50)
-                   
+                    }
+                    
+                    Button {
+                        rateUs()
+                    } label: {
+                        
+                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 150:80, text: "RATE US", textSize: DeviceInfo.shared.deviceType == .pad ? 40:20)
+                    }
                 }
                 
                 Spacer()
             }
         }.background(
-            Image(.background)
+            Image(.appBg)
                 .resizable()
                 .edgesIgnoringSafeArea(.all)
                 .scaledToFill()
             
         )
+    }
+    
+    func rateUs() {
+        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+            SKStoreReviewController.requestReview(in: scene)
+        }
     }
 }
 

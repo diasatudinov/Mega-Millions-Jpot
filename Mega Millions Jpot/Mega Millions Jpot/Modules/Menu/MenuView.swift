@@ -10,17 +10,18 @@ import SwiftUI
 
 struct MenuView: View {
     @Environment(\.presentationMode) var presentationMode
-    @State private var showTraining = false
-    @State private var showGame = false
-    @State private var showResults = false
-    @State private var showRules = false
+    @State private var showDailyRoulette = false
+    @State private var showGames = false
+    @State private var showAchivements = false
     @State private var showSettings = false
     
+    @StateObject var user = User.shared
     @State private var timeRemaining: String = "24:00"
     @State private var timerActive: Bool = false
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-//    @StateObject var settingsVM = SettingsModel()
+    @StateObject var achivementsVM = AchievementsViewModel()
+    @StateObject var settingsVM = SettingsModel()
     @StateObject var teamVM = TeamViewModel()
     
     var body: some View {
@@ -35,38 +36,98 @@ struct MenuView: View {
                         // Вертикальная ориентация
                         ZStack {
                             
-                            
-                            
                             HStack {
                                 Spacer()
+                                HStack {
                                 VStack(spacing: 25) {
-                                   
-                                
-                                    Button {
-                                        showTraining = true
-                                    } label: {
-                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 86, text: "Games", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 22)
-                                    }
                                     
-                                    
-                                    Button {
+                                    VStack {
+                                        HStack {
+                                            ZStack {
+                                                Image(.moneyBg)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                HStack {
+                                                    Image(.coin)
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .padding(.vertical, 5)
+                                                    Text("\(user.coins)")
+                                                        .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
+                                                        .foregroundStyle(.white)
+                                                }
+                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                                            
+                                            ZStack {
+                                                Image(.moneyBg)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                HStack {
+                                                    Image(.line)
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .padding(.vertical, 5)
+                                                    Text("250")
+                                                        .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
+                                                        .foregroundStyle(.white)
+                                                }
+                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                                        }
                                         
-                                        showGame = true
-                                    } label: {
-                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 86, text: "Achievements", textSize: DeviceInfo.shared.deviceType == .pad ? 32 : 20)
+                                        VStack {
+                                            if let team = teamVM.currentTeam {
+                                                Image(team.icon)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(height: DeviceInfo.shared.deviceType == .pad ? 200:100)
+                                            }
+                                            
+                                            ZStack {
+                                                ProgressView(value: Double(user.xp), total: 100)
+                                                    .progressViewStyle(LinearProgressViewStyle())
+                                                    .accentColor(Color.yellow)
+                                                    .cornerRadius(10)
+                                                    .padding(.horizontal, 1)
+                                                    .background {
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .foregroundStyle(.white.opacity(0.45))
+                                                    }
+                                                    .scaleEffect(y: DeviceInfo.shared.deviceType == .pad ? 8:4.0, anchor: .center)
+                                                Text("XP")
+                                                    .foregroundStyle(.secondaryGold)
+                                                    .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 25:16))
+                                            }.frame(width: DeviceInfo.shared.deviceType == .pad ? 200:100)
+                                        }
                                     }
                                     
-                                    Button {
-                                        showSettings = true
-                                    } label: {
-                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 86, text: "Settings", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 22)
+                                    HStack {
+                                        VStack {
+                                            Button {
+                                                showGames = true
+                                            } label: {
+                                                TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 86, text: "Games", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 22)
+                                            }
+                                            
+                                            
+                                            Button {
+                                                
+                                                showAchivements = true
+                                            } label: {
+                                                TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 86, text: "Achievements", textSize: DeviceInfo.shared.deviceType == .pad ? 32 : 20)
+                                            }
+                                            
+                                            Button {
+                                                showSettings = true
+                                            } label: {
+                                                TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 86, text: "Settings", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 22)
+                                            }
+                                        }
+                                        
+                                        DailyRouletteBoard(height: 200, btnText: "SPIN", btnPress: { showDailyRoulette = true })
                                     }
-                                    
-                                    
-                                    DailyRouletteBoard(height: 200, btnText: "SPIN", btnPress: {})
-                                    
                                     
                                 }
+                            }
                                 Spacer()
                             }
                             
@@ -78,7 +139,7 @@ struct MenuView: View {
                             
                             VStack {
                                 HStack(alignment: .top) {
-                                    DailyRouletteBoard(height: 200, btnText: "SPIN", btnPress: {})
+                                    DailyRouletteBoard(height: DeviceInfo.shared.deviceType == .pad ? 350:200, btnText: "SPIN", btnPress: {})
                                         .opacity(0)
                                     Spacer()
                                     VStack {
@@ -92,11 +153,11 @@ struct MenuView: View {
                                                         .resizable()
                                                         .scaledToFit()
                                                         .padding(.vertical, 5)
-                                                    Text("250")
-                                                        .font(.custom(Fonts.regular.rawValue, size: 30))
+                                                    Text("\(user.coins)")
+                                                        .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
                                                         .foregroundStyle(.white)
                                                 }
-                                            }.frame(height: 45)
+                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
                                             
                                             ZStack {
                                                 Image(.moneyBg)
@@ -108,10 +169,10 @@ struct MenuView: View {
                                                         .scaledToFit()
                                                         .padding(.vertical, 5)
                                                     Text("250")
-                                                        .font(.custom(Fonts.regular.rawValue, size: 30))
+                                                        .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
                                                         .foregroundStyle(.white)
                                                 }
-                                            }.frame(height: 45)
+                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
                                         }
                                         
                                         VStack {
@@ -119,31 +180,38 @@ struct MenuView: View {
                                                 Image(team.icon)
                                                     .resizable()
                                                     .scaledToFit()
-                                                    .frame(height: 100)
+                                                    .frame(height: DeviceInfo.shared.deviceType == .pad ? 200:100)
                                             }
-                                            
+                                        
+                                            ZStack {
+                                                ProgressView(value: Double(user.xp), total: 100)
+                                                    .progressViewStyle(LinearProgressViewStyle())
+                                                    .accentColor(Color.yellow)
+                                                    .cornerRadius(10)
+                                                    .padding(.horizontal, 1)
+                                                    .background {
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .foregroundStyle(.white.opacity(0.45))
+                                                    }
+                                                    .scaleEffect(y: DeviceInfo.shared.deviceType == .pad ? 8:4.0, anchor: .center)
+                                                Text("XP")
+                                                    .foregroundStyle(.secondaryGold)
+                                                    .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 25:16))
+                                            }.frame(width: DeviceInfo.shared.deviceType == .pad ? 200:100)
                                         }
                                     }
                                     Spacer()
-                                    DailyRouletteBoard(height: 200, btnText: "SPIN", btnPress: {})
-                                }.padding(16)
+                                    DailyRouletteBoard(height: DeviceInfo.shared.deviceType == .pad ? 350:200, btnText: "SPIN", btnPress: { showDailyRoulette = true })
+                                }
                                 
                                 VStack(spacing: 15) {
                                     
                                     HStack(spacing: 15) {
                                         Spacer()
                                         Button {
-                                            showTraining = true
+                                            showGames = true
                                         } label: {
-                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Training", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
-                                        }
-                                        
-                                        
-                                        Button {
-                                            
-                                            showGame = true
-                                        } label: {
-                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Online", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
+                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 70, text: "Games", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 20)
                                         }
                                         Spacer()
                                     }
@@ -151,30 +219,18 @@ struct MenuView: View {
                                     HStack(spacing: 15) {
                                         Spacer()
                                         Button {
-                                            withAnimation {
-                                                showResults = true
-                                            }
+                                            
+                                            showAchivements = true
                                         } label: {
-                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Best Results", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
+                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 70, text: "Achievements", textSize: DeviceInfo.shared.deviceType == .pad ? 32 : 16)
                                         }
-                                        
-                                        Button {
-                                            showRules = true
-                                        } label: {
-                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Rules", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
-                                        }
-                                        Spacer()
-                                    }
-                                    
-                                    HStack(spacing: 5) {
-                                        Spacer()
-                                        
                                         
                                         Button {
                                             showSettings = true
                                         } label: {
-                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Settings", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
+                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 70, text: "Settings", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 20)
                                         }
+                                        
                                         Spacer()
                                     }
                                     
@@ -184,7 +240,7 @@ struct MenuView: View {
                             }
                             
                             
-                        }
+                        }.padding(16)
                     }
                     Spacer()
                 }
@@ -213,17 +269,17 @@ struct MenuView: View {
 //                        MusicPlayer.shared.stopBackgroundMusic()
 //                    }
 //                }
-                .fullScreenCover(isPresented: $showTraining) {
+                .fullScreenCover(isPresented: $showDailyRoulette) {
                  //   TrainingView(viewModel: trainingVM, settingsVM: settingsVM)
                 }
-                .fullScreenCover(isPresented: $showGame) {
-                 //   OnlineView(teamVM: teamVM, settingsVM: settingsVM)
-                }
-                .fullScreenCover(isPresented: $showRules) {
+                .fullScreenCover(isPresented: $showGames) {
                     //RulesView()
                 }
+                .fullScreenCover(isPresented: $showAchivements) {
+                    AchievementsView(viewModel: achivementsVM)
+                }
                 .fullScreenCover(isPresented: $showSettings) {
-                   // SettingsView(settings: settingsVM, teamVM: teamVM)
+                    SettingsView(settings: settingsVM)
                     
                 }
                 
