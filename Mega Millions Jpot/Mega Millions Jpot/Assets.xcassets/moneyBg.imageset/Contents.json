@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "moneyBg.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
