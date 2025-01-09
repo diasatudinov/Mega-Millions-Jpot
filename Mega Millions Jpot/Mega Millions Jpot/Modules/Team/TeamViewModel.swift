@@ -10,11 +10,10 @@ import SwiftUI
 
 class TeamViewModel: ObservableObject {
     @Published var teams: [Team] = [
-        Team(icon: "team1Logo1", name: "Tulalip Team"),
-        Team(icon: "team1Logo2", name: "Avrora Team"),
-        Team(icon: "team1Logo3", name: "Arax Team"),
-        Team(icon: "team1Logo4", name: "Vendetta team"),
-        Team(icon: "team1Logo5", name: "Tereria Team")
+        Team(icon: "avatar1", selectedIcon: "avatar1S", name: ""),
+        Team(icon: "avatar2", selectedIcon: "avatar2S", name: ""),
+        Team(icon: "avatar3", selectedIcon: "avatar3S", name: ""),
+        Team(icon: "avatar4", selectedIcon: "avatar4S", name: "")
         
     ]
     

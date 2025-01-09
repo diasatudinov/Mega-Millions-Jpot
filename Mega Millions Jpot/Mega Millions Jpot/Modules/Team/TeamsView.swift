@@ -12,27 +12,108 @@ struct TeamsView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: TeamViewModel
     @State private var currentTab: Int = 0
+    @State private var currentTeam: Team?
+    @State private var nickname: String = ""
     var body: some View {
-        ZStack {
-
-           
+        GeometryReader { geometry in
             
-            HStack {
-                
-                
-                
-                TabView(selection: $currentTab) {
-                    ForEach(viewModel.teams.indices, id: \.self) { index in
-                        achivementView(image: viewModel.teams[index].icon, header: viewModel.teams[index].name, imageHeight: 204, team: viewModel.teams[index])
-                            .tag(index)
+            if geometry.size.width < geometry.size.height {
+                ZStack {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            ForEach(viewModel.teams.indices, id: \.self) { index in
+                                
+                                Button {
+                                    currentTeam = viewModel.teams[index]
+                                } label: {
+                                    Image(viewModel.teams[index] == currentTeam ? viewModel.teams[index].selectedIcon : viewModel.teams[index].icon)
+                                        .resizable()
+                                        .foregroundColor(.black)
+                                        .scaledToFit()
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 104 * 1.8 : 104)
+                                }
+                            }
+                            .frame(width: DeviceInfo.shared.deviceType == .pad ? 160 : 80)
+                            Spacer()
+                        }.padding(.bottom)
+                        
+                        ZStack {
+                            Image(.textFieldBg)
+                                .resizable()
+                                .scaledToFit()
+                                
+                            TextField("Nickname", text: $nickname)
+                                .font(.custom(Fonts.regular.rawValue, size: 16))
+                                .padding(.horizontal)
+                                .foregroundStyle(.white)
+                                
+                        }.padding(.horizontal, 60).padding(.bottom, 50)
+                        
+                        
+                        Button {
+                            viewModel.currentTeam = currentTeam
+                        } label: {
+                            TextBg(height: 60, text: "PLAY", textSize: 20)
+                        }
+                        
+                        Spacer()
                     }
                 }
-                .tabViewStyle(.page)
-                
-                .frame(width: DeviceInfo.shared.deviceType == .pad ? 480 : 240)
-                
+            } else {
+                ZStack {
+                    VStack {
+                        Spacer()
+                        HStack(spacing: 20) {
+                            Spacer()
+                            ForEach(viewModel.teams.indices, id: \.self) { index in
+                                
+                                Button {
+                                    currentTeam = viewModel.teams[index]
+                                } label: {
+                                    Image(viewModel.teams[index] == currentTeam ? viewModel.teams[index].selectedIcon : viewModel.teams[index].icon)
+                                        .resizable()
+                                        .foregroundColor(.black)
+                                        .scaledToFit()
+                                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 104 * 1.8 : 104)
+                                }
+                            }
+                            .frame(width: DeviceInfo.shared.deviceType == .pad ? 160 : 80)
+                            Spacer()
+                        }.padding(.bottom, 5)
+                        
+                        ZStack {
+                            Image(.textFieldBg)
+                                .resizable()
+                                .scaledToFit()
+                                
+                            TextField("Nickname", text: $nickname)
+                                .font(.custom(Fonts.regular.rawValue, size: 16))
+                                .padding(.horizontal)
+                                .foregroundStyle(.white)
+                                
+                        }.frame(width: 300).padding(.bottom, 50)
+                        
+                        
+                        Button {
+                            if let icon = currentTeam, !nickname.isEmpty {
+                                viewModel.currentTeam = currentTeam
+                            }
+                        } label: {
+                            TextBg(height: 60, text: "PLAY", textSize: 20)
+                        }
+                        
+                    }
+                }
             }
-        }
+        }.background(
+            Image(.appBg)
+                .resizable()
+                .edgesIgnoringSafeArea(.all)
+                .scaledToFill()
+            
+        )
     }
     
     @ViewBuilder func achivementView(image: String, header: String, imageHeight: CGFloat, team: Team) -> some View {
@@ -42,11 +123,7 @@ struct TeamsView: View {
             
             VStack(alignment: .center, spacing: 10) {
                 
-                Image(image)
-                    .resizable()
-                    .foregroundColor(.black)
-                    .scaledToFit()
-                    .frame(height: DeviceInfo.shared.deviceType == .pad ? imageHeight * 1.8 : imageHeight)
+               
                 
                 
                 Text(header)
@@ -55,16 +132,6 @@ struct TeamsView: View {
                     .multilineTextAlignment(.center)
                     .textCase(.uppercase)
                     .padding(.bottom, 8)
-                
-                
-                Button {
-                    
-                    viewModel.currentTeam = team
-                } label: {
-                    TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90:46, text: viewModel.currentTeam?.name == header ? "Selected" : "Select", textSize: DeviceInfo.shared.deviceType == .pad ? 48:24)
-                    
-                }
-                
                 
             }
             
