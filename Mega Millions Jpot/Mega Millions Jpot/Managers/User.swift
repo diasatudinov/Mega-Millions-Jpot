@@ -1,20 +1,28 @@
+//
+//  User.swift
+//  Mega Millions Jpot
+//
+//  Created by Dias Atudinov on 09.01.2025.
+//
+
+
 import SwiftUI
 
 class User: ObservableObject {
     static let shared = User()
     
-    @AppStorage("coins") var storedCoins: Int = 10
-    @Published var coins: Int = 10
+    @AppStorage("coins") var storedCoins: Int = 100
+    @Published var coins: Int = 100
     
-    @AppStorage("game1Level") var storedLevel: Int = 1
-    @Published var level: Int = 1
+    @AppStorage("experience") var storedXP: Int = 0
+    @Published var xp: Int = 0
     
     @AppStorage("game2Level") var storedLevelGame: Int = 1
     @Published var levelGame: Int = 1
     
     init() {
         coins = storedCoins
-        level = storedLevel
+        xp = storedXP
         levelGame = storedLevelGame
     }
     
@@ -28,9 +36,13 @@ class User: ObservableObject {
         storedCoins = self.coins
     }
     
-    func updateUserLevel() {
-        self.level += 1
-        storedLevel = self.level
+    func updateUserXP() {
+        self.xp += 2
+        
+        if self.xp > 99 {
+            self.xp = 0
+        }
+        storedXP = self.xp
     }
     
     func updateUserLevelGame2() {
