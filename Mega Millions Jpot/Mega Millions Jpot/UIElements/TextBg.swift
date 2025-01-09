@@ -1,3 +1,11 @@
+//
+//  TextBg.swift
+//  Mega Millions Jpot
+//
+//  Created by Dias Atudinov on 09.01.2025.
+//
+
+
 import SwiftUI
 
 struct TextBg: View {
@@ -6,14 +14,13 @@ struct TextBg: View {
     var textSize: CGFloat
     var body: some View {
         ZStack {
-            Image(.textBgTL)
+            Image(.textBg)
                 .resizable()
                 .scaledToFit()
                 .frame(height: height)
             Text(text)
-                .font(.custom(Alike.regular.rawValue, size: textSize))
-                .foregroundStyle(.black)
-                .textCase(.uppercase)
+                .font(.custom(Fonts.regular.rawValue, size: textSize))
+                .foregroundStyle(.secondaryGold)
         }
     }
 }
