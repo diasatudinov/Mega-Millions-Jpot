@@ -24,7 +24,7 @@ struct MenuView: View {
     @StateObject var teamVM = TeamViewModel()
     
     var body: some View {
-        if teamVM.currentTeam != nil {
+        if teamVM.currentTeam == nil {
             TeamsView(viewModel: teamVM)
         } else {
             GeometryReader { geometry in
@@ -77,7 +77,56 @@ struct MenuView: View {
                         ZStack {
                             
                             VStack {
-                                Spacer()
+                                HStack(alignment: .top) {
+                                    DailyRouletteBoard(height: 200, btnText: "SPIN", btnPress: {})
+                                        .opacity(0)
+                                    Spacer()
+                                    VStack {
+                                        HStack {
+                                            ZStack {
+                                                Image(.moneyBg)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                HStack {
+                                                    Image(.coin)
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .padding(.vertical, 5)
+                                                    Text("250")
+                                                        .font(.custom(Fonts.regular.rawValue, size: 30))
+                                                        .foregroundStyle(.white)
+                                                }
+                                            }.frame(height: 45)
+                                            
+                                            ZStack {
+                                                Image(.moneyBg)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                HStack {
+                                                    Image(.line)
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .padding(.vertical, 5)
+                                                    Text("250")
+                                                        .font(.custom(Fonts.regular.rawValue, size: 30))
+                                                        .foregroundStyle(.white)
+                                                }
+                                            }.frame(height: 45)
+                                        }
+                                        
+                                        VStack {
+                                            if let team = teamVM.currentTeam {
+                                                Image(team.icon)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(height: 100)
+                                            }
+                                            
+                                        }
+                                    }
+                                    Spacer()
+                                    DailyRouletteBoard(height: 200, btnText: "SPIN", btnPress: {})
+                                }.padding(16)
                                 
                                 VStack(spacing: 15) {
                                     
