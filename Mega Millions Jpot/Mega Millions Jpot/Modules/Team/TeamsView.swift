@@ -1,3 +1,11 @@
+//
+//  TeamsView.swift
+//  Mega Millions Jpot
+//
+//  Created by Dias Atudinov on 09.01.2025.
+//
+
+
 import SwiftUI
 
 struct TeamsView: View {
@@ -6,42 +14,12 @@ struct TeamsView: View {
     @State private var currentTab: Int = 0
     var body: some View {
         ZStack {
-            Color.main.ignoresSafeArea()
-            
-            if viewModel.currentTeam != nil {
-                VStack {
-                    HStack {
-                        Button {
-                            presentationMode.wrappedValue.dismiss()
-                        } label: {
-                            ZStack {
-                                Image(.backTL)
-                                    .resizable()
-                                    .scaledToFit()
-                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 100:50)
-                            
-                        }
-                        Spacer()
-                        
-                        
-                    }.padding([.top,.horizontal], 20)
-                    
-                    Spacer()
-                }
-            }
+
+           
             
             HStack {
                 
-                Button {
-                    if currentTab > 0 {
-                        currentTab -= 1
-                    }
-                } label: {
-                    Image(.leftTL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 100 : 50)
-                }
+                
                 
                 TabView(selection: $currentTab) {
                     ForEach(viewModel.teams.indices, id: \.self) { index in
@@ -53,17 +31,6 @@ struct TeamsView: View {
                 
                 .frame(width: DeviceInfo.shared.deviceType == .pad ? 480 : 240)
                 
-                Button {
-                    if currentTab < 4 {
-                        currentTab += 1
-                    }
-                } label: {
-                    Image(.leftTL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 100 : 50)
-                        .rotationEffect(.degrees(180))
-                }
             }
         }
     }
@@ -83,7 +50,7 @@ struct TeamsView: View {
                 
                 
                 Text(header)
-                    .font(.custom(Alike.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 48:24))
+                    .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 48:24))
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                     .textCase(.uppercase)
