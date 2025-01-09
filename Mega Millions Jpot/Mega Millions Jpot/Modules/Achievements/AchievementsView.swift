@@ -1,3 +1,11 @@
+//
+//  AchievementsView.swift
+//  Mega Millions Jpot
+//
+//  Created by Dias Atudinov on 09.01.2025.
+//
+
+
 import SwiftUI
 
 struct AchievementsView: View {
@@ -14,43 +22,58 @@ struct AchievementsView: View {
                 
                 ZStack {
                     
-                    if isLandscape {
+                   
                         ZStack {
                             // Горизонтальная ориентация
                             VStack(spacing: 0) {
-                                
-                                TabView(selection: $currentTab) {
-                                    achivementView(image: .achivement1, header: "Gold \nCollector", text: "Collect \n100/250/500 coins", isOpen: viewModel.achievementOne)
-                                        .tag(0)
-                                    achivementView(image: .achivement2, header: "Amulet\nMaster", text: "Collect 10/50/100 \nred amulets", isOpen: viewModel.achievementTwo)
-                                        .tag(1)
-                                    achivementView(image: .achivement3, header: "Combo\nKing", text: "Win 3/10/20 games \nin a row", isOpen: viewModel.achievementThree)
-                                        .tag(2)
+                                Spacer()
+                                Spacer()
+                                HStack(spacing: 0) {
+                                    ZStack {
+                                        Image(.achivement1)
+                                            .renderingMode(viewModel.achievementOne ? .original : .template)
+                                            .resizable()
+                                            .foregroundColor(.black)
+                                            .scaledToFit()
+                                            
+                                        
+                                        }.frame(height: DeviceInfo.shared.deviceType == .pad ? 400:200)
+                                    
+                                    ZStack {
+                                        Image(.achivement2)
+                                            .renderingMode(viewModel.achievementTwo ? .original : .template)
+                                            .resizable()
+                                            .foregroundColor(.black)
+                                            .scaledToFit()
+                                            
+                                        
+                                        }.frame(height: DeviceInfo.shared.deviceType == .pad ? 400:200)
+                                    
+                                    ZStack {
+                                        Image(.achivement3)
+                                            .renderingMode(viewModel.achievementThree ? .original : .template)
+                                            .resizable()
+                                            .foregroundColor(.black)
+                                            .scaledToFit()
+                                            
+                                        
+                                        }.frame(height: DeviceInfo.shared.deviceType == .pad ? 400:200)
+                                    
+                                    ZStack {
+                                        Image(.achivement4)
+                                            .renderingMode(viewModel.achievementFour ? .original : .template)
+                                            .resizable()
+                                            .foregroundColor(.black)
+                                            .scaledToFit()
+                                            
+                                        
+                                        }.frame(height: DeviceInfo.shared.deviceType == .pad ? 400:200)
                                 }
-                                .tabViewStyle(.page)
+                                Spacer()
                                 
                             }
                             
                         }
-                    } else {
-                        ZStack {
-                            // Горизонтальная ориентация
-                            VStack(spacing: 0) {
-                                
-                                TabView(selection: $currentTab) {
-                                    achivementView(image: .achivement1, header: "Gold \nCollector", text: "Collect \n100/250/500 coins", isOpen: viewModel.achievementOne)
-                                        .tag(0)
-                                    achivementView(image: .achivement2, header: "Amulet\nMaster", text: "Collect 10/50/100 \nred amulets", isOpen: viewModel.achievementTwo)
-                                        .tag(1)
-                                    achivementView(image: .achivement3, header: "Combo\nKing", text: "Win 3/10/20 games \nin a row", isOpen: viewModel.achievementThree)
-                                        .tag(2)
-                                }
-                                .tabViewStyle(.page)
-                                
-                            }
-                            
-                        }
-                    }
                     
                 }.textCase(.uppercase)
                 
@@ -58,9 +81,11 @@ struct AchievementsView: View {
                     ZStack {
                         HStack {
                             Spacer()
-                            TextWithBorder(text: "Achievements", font: .custom(Fonts.mazzardM.rawValue, size: 50), textColor: .mainYellow, borderColor: .mainBrown, borderWidth: 2)
+                            
+                            Text("Achievements")
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 60:35))
+                                .foregroundStyle(.yellow)
                                 .textCase(.uppercase)
-                                
                                 
                             
                             Spacer()
@@ -74,7 +99,7 @@ struct AchievementsView: View {
                                         .resizable()
                                         .scaledToFit()
                                     
-                                }.frame(height: 65)
+                                }.frame(height: 50)
                                 
                             }
                             Spacer()
@@ -84,7 +109,7 @@ struct AchievementsView: View {
                 }
                 
             }.background(
-                Image(.background)
+                Image(.appBg)
                     .resizable()
                     .edgesIgnoringSafeArea(.all)
                     .scaledToFill()
@@ -94,41 +119,13 @@ struct AchievementsView: View {
         }
     }
         
-        @ViewBuilder func achivementView(image: ImageResource, header: String, text: String, isOpen: Bool) -> some View {
+        @ViewBuilder func achivementView(image: String, header: String, text: String, isOpen: Bool) -> some View {
             
             
             
             VStack(alignment: .center, spacing: 0) {
                 Spacer()
-                HStack(spacing: 100) {
-                    Button {
-                        if currentTab > 0 {
-                            currentTab -= 1
-                        }
-                    } label: {
-                        Image(.swipeBtn)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: DeviceInfo.shared.deviceType == .pad ? 80:40)
-                            
-                    }
-                    
-                    TextWithBorder(text: text, font: .custom(Fonts.mazzardM.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 48:24), textColor: .mainBrown, borderColor: .mainYellow, borderWidth: 2)
-                        .textCase(.uppercase)
-                        .multilineTextAlignment(.center)
-                    
-                    Button {
-                        if currentTab < 2 { // Adjust based on the number of tabs
-                            currentTab += 1
-                        }
-                    } label: {
-                        Image(.swipeBtn)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: DeviceInfo.shared.deviceType == .pad ? 80 : 40)
-                            .rotationEffect(.degrees(180))
-                    }
-                }
+                
                 ZStack {
                     Image(image)
                         .renderingMode(isOpen ? .original : .template)
@@ -138,11 +135,11 @@ struct AchievementsView: View {
                         .padding(.bottom, DeviceInfo.shared.deviceType == .pad ? 0:30)
                     
                     VStack {
-                        TextWithBorder(text: header, font: .custom(Fonts.mazzardM.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20), textColor: .mainYellow, borderColor: .mainBrown, borderWidth: 2)
-                            .textCase(.uppercase)
-                            .padding(16)
-                            .multilineTextAlignment(.center)
-                            .offset(x: DeviceInfo.shared.deviceType == .pad ? -280:-150)
+//                        TextWithBorder(text: header, font: .custom(Fonts.mazzardM.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20), textColor: .mainYellow, borderColor: .mainBrown, borderWidth: 2)
+//                            .textCase(.uppercase)
+//                            .padding(16)
+//                            .multilineTextAlignment(.center)
+//                            .offset(x: DeviceInfo.shared.deviceType == .pad ? -280:-150)
                             
                         Spacer()
                     }
