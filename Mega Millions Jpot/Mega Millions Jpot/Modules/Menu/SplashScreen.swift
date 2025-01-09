@@ -51,7 +51,7 @@ struct SplashScreen: View {
                                 .foregroundStyle(.secondaryGold)
                         }
                         .scaleEffect(y: 4.0, anchor: .center)
-                        .padding(.horizontal, 192)
+                        .padding(.horizontal, 92)
                 }
                 
                 
