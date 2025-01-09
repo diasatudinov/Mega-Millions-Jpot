@@ -1,3 +1,11 @@
+//
+//  MenuView.swift
+//  Mega Millions Jpot
+//
+//  Created by Dias Atudinov on 09.01.2025.
+//
+
+
 import SwiftUI
 
 struct MenuView: View {
@@ -8,13 +16,15 @@ struct MenuView: View {
     @State private var showRules = false
     @State private var showSettings = false
     
+    @State private var timeRemaining: String = "24:00"
+    @State private var timerActive: Bool = false
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    @StateObject var settingsVM = SettingsModel()
+//    @StateObject var settingsVM = SettingsModel()
     @StateObject var teamVM = TeamViewModel()
-    @StateObject private var trainingVM = TrainingViewModel()
     
     var body: some View {
-        if teamVM.currentTeam == nil {
+        if teamVM.currentTeam != nil {
             TeamsView(viewModel: teamVM)
         } else {
             GeometryReader { geometry in
@@ -30,14 +40,12 @@ struct MenuView: View {
                             HStack {
                                 Spacer()
                                 VStack(spacing: 25) {
-                                    Image(.logoTL)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 210)
+                                   
+                                
                                     Button {
                                         showTraining = true
                                     } label: {
-                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Training", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
+                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 86, text: "Games", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 22)
                                     }
                                     
                                     
@@ -45,72 +53,23 @@ struct MenuView: View {
                                         
                                         showGame = true
                                     } label: {
-                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Online", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
-                                    }
-                                    
-                                    Button {
-                                        withAnimation {
-                                            showResults = true
-                                        }
-                                    } label: {
-                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Best Results", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
-                                    }
-                                    
-                                    Button {
-                                        showRules = true
-                                    } label: {
-                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Rules", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
+                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 86, text: "Achievements", textSize: DeviceInfo.shared.deviceType == .pad ? 32 : 20)
                                     }
                                     
                                     Button {
                                         showSettings = true
                                     } label: {
-                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 90 : 46, text: "Settings", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 24)
+                                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140 : 86, text: "Settings", textSize: DeviceInfo.shared.deviceType == .pad ? 40 : 22)
                                     }
+                                    
+                                    
+                                    DailyRouletteBoard(height: 200, btnText: "SPIN", btnPress: {})
+                                    
                                     
                                 }
                                 Spacer()
                             }
                             
-                            if showResults {
-                                ZStack {
-                                    Image(.bestScoreBg)
-                                        .resizable()
-                                        .scaledToFit()
-                                    
-                                    
-                                    VStack(spacing: 5) {
-                                        Spacer()
-                                        Text("Time")
-                                            .font(.custom(Alike.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
-                                            .foregroundStyle(.white)
-                                            .textCase(.uppercase)
-                                        
-                                        Text(trainingVM.scoreTime)
-                                            .font(.custom(Alike.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
-                                            .foregroundStyle(.white)
-                                            .textCase(.uppercase)
-                                            .padding(.horizontal, 50)
-                                            .padding(.vertical, 5)
-                                            .background(
-                                                Rectangle()
-                                                    .foregroundStyle(.timeBg)
-                                                    .cornerRadius(20)
-                                                
-                                            )
-                                            .padding(.bottom, DeviceInfo.shared.deviceType == .pad ? 20:10)
-                                        
-                                        Button {
-                                            withAnimation {
-                                                showResults = false
-                                            }
-                                        } label: {
-                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 80:38, text: "menu", textSize: DeviceInfo.shared.deviceType == .pad ? 48:24)
-                                        }
-                                        
-                                    }.padding(.bottom, DeviceInfo.shared.deviceType == .pad ? 50:18)
-                                }.frame(height: DeviceInfo.shared.deviceType == .pad ? 400:192)
-                            }
                             
                             
                         }
@@ -121,10 +80,7 @@ struct MenuView: View {
                                 Spacer()
                                 
                                 VStack(spacing: 15) {
-                                    Image(.logoTL)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 182)
+                                    
                                     HStack(spacing: 15) {
                                         Spacer()
                                         Button {
@@ -178,83 +134,47 @@ struct MenuView: View {
                                 Spacer()
                             }
                             
-                            if showResults {
-                                ZStack {
-                                    Image(.bestScoreBg)
-                                        .resizable()
-                                        .scaledToFit()
-                                    
-                                    
-                                    VStack(spacing: 5) {
-                                        Spacer()
-                                        Text("Time")
-                                            .font(.custom(Alike.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
-                                            .foregroundStyle(.white)
-                                            .textCase(.uppercase)
-                                        
-                                        Text(trainingVM.scoreTime)
-                                            .font(.custom(Alike.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
-                                            .foregroundStyle(.white)
-                                            .textCase(.uppercase)
-                                            .padding(.horizontal, 50)
-                                            .padding(.vertical, 5)
-                                            .background(
-                                                Rectangle()
-                                                    .foregroundStyle(.timeBg)
-                                                    .cornerRadius(20)
-                                                
-                                            )
-                                            .padding(.bottom, DeviceInfo.shared.deviceType == .pad ? 20:10)
-                                        
-                                        Button {
-                                            withAnimation {
-                                                showResults = false
-                                            }
-                                        } label: {
-                                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 80:38, text: "menu", textSize: DeviceInfo.shared.deviceType == .pad ? 48:24)
-                                        }
-                                        
-                                    }.padding(.bottom, DeviceInfo.shared.deviceType == .pad ? 50:18)
-                                }.frame(height: DeviceInfo.shared.deviceType == .pad ? 400:192)
-                            }
                             
                         }
                     }
                     Spacer()
                 }
                 .background(
-                    ZStack {
-                        Color.main.ignoresSafeArea()
-                        Image(.bgTL)
-                            .resizable()
-                            .edgesIgnoringSafeArea(.all)
-                            .scaledToFill()
-                    }
+                    Image(.appBg)
+                        .resizable()
+                        .edgesIgnoringSafeArea(.all)
+                        .scaledToFill()
                     
                 )
                 .onAppear {
-                    if settingsVM.musicEnabled {
-                        MusicPlayer.shared.playBackgroundMusic()
-                    }
+                    updateTimer()
                 }
-                .onChange(of: settingsVM.musicEnabled) { enabled in
-                    if enabled {
-                        MusicPlayer.shared.playBackgroundMusic()
-                    } else {
-                        MusicPlayer.shared.stopBackgroundMusic()
-                    }
+                .onReceive(timer) { _ in
+                    updateTimer()
                 }
+//                .onAppear {
+//                    if settingsVM.musicEnabled {
+//                        MusicPlayer.shared.playBackgroundMusic()
+//                    }
+//                }
+//                .onChange(of: settingsVM.musicEnabled) { enabled in
+//                    if enabled {
+//                        MusicPlayer.shared.playBackgroundMusic()
+//                    } else {
+//                        MusicPlayer.shared.stopBackgroundMusic()
+//                    }
+//                }
                 .fullScreenCover(isPresented: $showTraining) {
-                    TrainingView(viewModel: trainingVM, settingsVM: settingsVM)
+                 //   TrainingView(viewModel: trainingVM, settingsVM: settingsVM)
                 }
                 .fullScreenCover(isPresented: $showGame) {
-                    OnlineView(teamVM: teamVM, settingsVM: settingsVM)
+                 //   OnlineView(teamVM: teamVM, settingsVM: settingsVM)
                 }
                 .fullScreenCover(isPresented: $showRules) {
-                    RulesView()
+                    //RulesView()
                 }
                 .fullScreenCover(isPresented: $showSettings) {
-                    SettingsView(settings: settingsVM, teamVM: teamVM)
+                   // SettingsView(settings: settingsVM, teamVM: teamVM)
                     
                 }
                 
@@ -262,6 +182,45 @@ struct MenuView: View {
         }
         
     }
+    
+    private func updateTimer() {
+        guard let lastPressDate = UserDefaults.standard.object(forKey: "LastPressDate") as? Date else {
+            timeRemaining = "00:00" // If no saved date, assume timer is full
+            timerActive = false
+            return
+        }
+        
+        let now = Date()
+        let totalDuration: TimeInterval = 24 * 60 * 60 // 24 hours in seconds
+        let elapsedTime = now.timeIntervalSince(lastPressDate) // Time since lastPressDate
+        let remainingTime = totalDuration - elapsedTime // Time left
+        
+        if remainingTime <= 0 {
+            timeRemaining = "00:00"
+            timerActive = false
+        } else {
+            timerActive = true
+            let hours = Int(remainingTime) / 3600
+            let minutes = (Int(remainingTime) % 3600) / 60
+            timeRemaining = String(format: "%02d:%02d", hours, minutes) // Format as hh:mm
+        }
+    }
+    
+//    private func handleButtonPress(point: Int) {
+//        user.updateUserCoins(for: point)
+//        lastPressDate = Date() // Update last press date
+//        UserDefaults.standard.set(lastPressDate, forKey: "LastPressDate")
+//        UserDefaults.standard.set(boxStates, forKey: "boxStates")
+//        UserDefaults.standard.set(savedBonus, forKey: "savedBonus")
+//        
+//        isButtonDisabled = true // Disable button
+//        
+//        // Optionally refresh button state after 24 hours
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 24 * 60 * 60) {
+//            checkButtonState()
+//        }
+//    }
+    
 }
 
 #Preview {
