@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "dice4_processed.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
