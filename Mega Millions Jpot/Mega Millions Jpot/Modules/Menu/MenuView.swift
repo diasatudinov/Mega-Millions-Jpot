@@ -285,11 +285,16 @@ struct MenuView: View {
 //                        MusicPlayer.shared.stopBackgroundMusic()
 //                    }
 //                }
+                .onChange(of: user.coins)  { newValue in
+                    if newValue > 10000 {
+                        achivementsVM.achievementOneDone()
+                    }
+                }
                 .fullScreenCover(isPresented: $showDailyRoulette) {
                     DailyRouletteView()
                 }
                 .fullScreenCover(isPresented: $showGames) {
-                    //RulesView()
+                    GamesView(viewModel: achivementsVM)
                 }
                 .fullScreenCover(isPresented: $showAchivements) {
                     AchievementsView(viewModel: achivementsVM)
@@ -306,15 +311,15 @@ struct MenuView: View {
     
     private func updateTimer() {
         guard let lastPressDate = UserDefaults.standard.object(forKey: "LastPressDate") as? Date else {
-            timeRemaining = "00:00" // If no saved date, assume timer is full
+            timeRemaining = "00:00"
             timerActive = false
             return
         }
         
         let now = Date()
-        let totalDuration: TimeInterval = 24 * 60 * 60 // 24 hours in seconds
-        let elapsedTime = now.timeIntervalSince(lastPressDate) // Time since lastPressDate
-        let remainingTime = totalDuration - elapsedTime // Time left
+        let totalDuration: TimeInterval = 24 * 60 * 60
+        let elapsedTime = now.timeIntervalSince(lastPressDate)
+        let remainingTime = totalDuration - elapsedTime
         
         if remainingTime <= 0 {
             timeRemaining = "00:00"
@@ -323,7 +328,7 @@ struct MenuView: View {
             timerActive = true
             let hours = Int(remainingTime) / 3600
             let minutes = (Int(remainingTime) % 3600) / 60
-            timeRemaining = String(format: "%02d:%02d", hours, minutes) // Format as hh:mm
+            timeRemaining = String(format: "%02d:%02d", hours, minutes)
         }
     }
     
