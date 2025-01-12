@@ -135,12 +135,6 @@ struct AchievementsView: View {
                         .padding(.bottom, DeviceInfo.shared.deviceType == .pad ? 0:30)
                     
                     VStack {
-//                        TextWithBorder(text: header, font: .custom(Fonts.mazzardM.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20), textColor: .mainYellow, borderColor: .mainBrown, borderWidth: 2)
-//                            .textCase(.uppercase)
-//                            .padding(16)
-//                            .multilineTextAlignment(.center)
-//                            .offset(x: DeviceInfo.shared.deviceType == .pad ? -280:-150)
-                            
                         Spacer()
                     }
                 }.frame(height: DeviceInfo.shared.deviceType == .pad ? 400:250)
