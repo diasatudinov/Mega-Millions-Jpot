@@ -56,7 +56,7 @@ struct MenuView: View {
                                                         .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
                                                         .foregroundStyle(.white)
                                                 }
-                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:40)
                                             
                                             ZStack {
                                                 Image(.moneyBg)
@@ -66,12 +66,20 @@ struct MenuView: View {
                                                     Image(.line)
                                                         .resizable()
                                                         .scaledToFit()
-                                                        .padding(.vertical, 5)
-                                                    Text("250")
+                                                        .padding(.vertical, 8)
+                                                    Text("\(user.energy)")
                                                         .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
                                                         .foregroundStyle(.white)
+                                                    Button {
+                                                        user.buyUserEnergy()
+                                                    } label: {
+                                                        Image(.plus)
+                                                            .resizable()
+                                                            .scaledToFit()
+                                                            .padding(5)
+                                                    }
                                                 }
-                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:40)
                                         }
                                         
                                         VStack {
@@ -123,7 +131,7 @@ struct MenuView: View {
                                             }
                                         }
                                         
-                                        DailyRouletteBoard(height: 200, btnText: "SPIN", btnPress: { showDailyRoulette = true })
+                                        DailyRouletteBoard(height: 200, btnText: timeRemaining != "00:00" ? "\(timeRemaining)" : "SPIN", btnPress: { showDailyRoulette = true })
                                     }
                                     
                                 }
@@ -157,9 +165,9 @@ struct MenuView: View {
                                                         .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
                                                         .foregroundStyle(.white)
                                                 }
-                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:40)
                                             
-                                            ZStack {
+                                            ZStack(alignment: .leading) {
                                                 Image(.moneyBg)
                                                     .resizable()
                                                     .scaledToFit()
@@ -167,12 +175,20 @@ struct MenuView: View {
                                                     Image(.line)
                                                         .resizable()
                                                         .scaledToFit()
-                                                        .padding(.vertical, 5)
-                                                    Text("250")
+                                                        .padding(.vertical, 8)
+                                                    Text("\(user.energy)")
                                                         .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
                                                         .foregroundStyle(.white)
-                                                }
-                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                                                    Button {
+                                                        user.buyUserEnergy()
+                                                    } label: {
+                                                        Image(.plus)
+                                                            .resizable()
+                                                            .scaledToFit()
+                                                            .padding(5)
+                                                    }
+                                                }.padding(.horizontal)
+                                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:40)
                                         }
                                         
                                         VStack {
@@ -201,7 +217,7 @@ struct MenuView: View {
                                         }
                                     }
                                     Spacer()
-                                    DailyRouletteBoard(height: DeviceInfo.shared.deviceType == .pad ? 350:200, btnText: "SPIN", btnPress: { showDailyRoulette = true })
+                                    DailyRouletteBoard(height: DeviceInfo.shared.deviceType == .pad ? 350:200, btnText: timeRemaining != "00:00" ? "\(timeRemaining)" : "SPIN", btnPress: { showDailyRoulette = true })
                                 }
                                 
                                 VStack(spacing: 15) {
@@ -270,7 +286,7 @@ struct MenuView: View {
 //                    }
 //                }
                 .fullScreenCover(isPresented: $showDailyRoulette) {
-                 //   TrainingView(viewModel: trainingVM, settingsVM: settingsVM)
+                    DailyRouletteView()
                 }
                 .fullScreenCover(isPresented: $showGames) {
                     //RulesView()
@@ -310,21 +326,6 @@ struct MenuView: View {
             timeRemaining = String(format: "%02d:%02d", hours, minutes) // Format as hh:mm
         }
     }
-    
-//    private func handleButtonPress(point: Int) {
-//        user.updateUserCoins(for: point)
-//        lastPressDate = Date() // Update last press date
-//        UserDefaults.standard.set(lastPressDate, forKey: "LastPressDate")
-//        UserDefaults.standard.set(boxStates, forKey: "boxStates")
-//        UserDefaults.standard.set(savedBonus, forKey: "savedBonus")
-//        
-//        isButtonDisabled = true // Disable button
-//        
-//        // Optionally refresh button state after 24 hours
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 24 * 60 * 60) {
-//            checkButtonState()
-//        }
-//    }
     
 }
 
