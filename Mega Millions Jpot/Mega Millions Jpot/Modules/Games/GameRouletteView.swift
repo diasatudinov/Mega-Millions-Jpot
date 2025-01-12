@@ -21,6 +21,8 @@ struct GameRouletteView: View {
     let colors = ["White", "Green", "Red"]
     let colorMultipliers = ["Red": 2, "White": 2, "Green": 10]
     
+    @ObservedObject var viewModel: AchievementsViewModel
+    
     var body: some View {
         ZStack {
             VStack {
@@ -52,7 +54,7 @@ struct GameRouletteView: View {
                                 .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
                                 .foregroundStyle(.white)
                         }
-                    }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                    }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:40)
                     
                     ZStack {
                         Image(.moneyBg)
@@ -67,7 +69,7 @@ struct GameRouletteView: View {
                                 .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
                                 .foregroundStyle(.white)
                         }
-                    }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                    }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:40)
                     
                     Spacer()
                     
@@ -159,8 +161,10 @@ struct GameRouletteView: View {
             if gameOver {
                 ZStack {
                     Image(.gameOverBg)
+                        .resizable()
+                        .scaledToFill()
                         .opacity(0.66)
-                    //.ignoresSafeArea()
+                        .ignoresSafeArea()
                     
                     VStack {
                         Text(resultColor == selectedColor ? "WIN!" : "LOSE!")
@@ -231,6 +235,7 @@ struct GameRouletteView: View {
             resultColor = randomColor
 
             if resultColor == selectedColor {
+                user.updateUserXP()
                 user.updateUserCoins(for: 100)
             } else {
                 user.minusUserEnergy(for: 1)
@@ -244,5 +249,5 @@ struct GameRouletteView: View {
 }
 
 #Preview {
-    GameRouletteView()
+    GameRouletteView(viewModel: AchievementsViewModel())
 }
