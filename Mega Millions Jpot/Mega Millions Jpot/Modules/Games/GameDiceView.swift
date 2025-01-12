@@ -7,17 +7,23 @@
 
 import SwiftUI
 
-struct GameDiceView: View {
+struct DiceView: View {
+    let value: Int
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Image("dice\(value)")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 85)
+            .shadow(radius: 5)
     }
 }
 
-#Preview {
-    GameDiceView()
-}
 
-struct DiceGameView: View {
+struct GameDiceView: View {
+    @StateObject var user = User.shared
+    @Environment(\.presentationMode) var presentationMode
+    
     @State private var playerDice: [Int] = [1, 1]
     @State private var dealerDice: [Int] = [1, 1]
     @State private var playerScore: Int = 0
@@ -25,69 +31,207 @@ struct DiceGameView: View {
     @State private var gameResult: String? = nil
     @State private var isGameOver = false
     @State private var isRolling = false
-
+    @State private var winStrike: Int = 0
+    
+    @ObservedObject var viewModel: AchievementsViewModel
+    
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Правила игры \"Кости\" против дилера")
-                .font(.title)
-                .multilineTextAlignment(.center)
-                .padding()
-
-            // Player Section
+        ZStack {
             VStack {
-                Text("Игрок")
-                    .font(.headline)
                 HStack {
-                    ForEach(playerDice, id: \.self) { die in
-                        DiceView(value: die)
+                    
+                    Button {
+                        presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        ZStack {
+                            Image(.backBtn)
+                                .resizable()
+                                .scaledToFit()
+                            
+                        }.frame(height: 50)
+                        
                     }
-                }
-                Text("Очки: \(playerScore)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            }
+                    
+                    Spacer()
+                    ZStack {
+                        Image(.moneyBg)
+                            .resizable()
+                            .scaledToFit()
+                        HStack {
+                            Image(.coin)
+                                .resizable()
+                                .scaledToFit()
+                                .padding(.vertical, 5)
+                            Text("\(user.coins)")
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
+                                .foregroundStyle(.white)
+                        }
+                    }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                    
+                    ZStack {
+                        Image(.moneyBg)
+                            .resizable()
+                            .scaledToFit()
+                        HStack {
+                            Image(.line)
+                                .resizable()
+                                .scaledToFit()
+                                .padding(.vertical, 5)
+                            Text("\(user.energy)")
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
+                                .foregroundStyle(.white)
+                        }
+                    }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:35)
+                    
+                    Spacer()
+                    
+                    ZStack {
+                        Image(.backBtn)
+                            .resizable()
+                            .scaledToFit()
+                        
+                    }.frame(height: 50).opacity(0)
+                }.padding(.bottom)
 
-            Divider()
-
-            // Dealer Section
-            VStack {
-                Text("Дилер")
-                    .font(.headline)
                 HStack {
-                    ForEach(dealerDice, id: \.self) { die in
-                        DiceView(value: die)
+                    Spacer()
+                    VStack {
+                        VStack(spacing: 30) {
+                            ZStack {
+                                Image(.diceBg)
+                                    .resizable()
+                                    .scaledToFit()
+                                Text("\(playerScore)")
+                                    .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 80:40))
+                                    .foregroundStyle(.secondaryGold)
+                                
+                            }.frame(height: 75)
+                            
+                            HStack(spacing: 50) {
+                                ForEach(playerDice, id: \.self) { die in
+                                    DiceView(value: die)
+                                }
+                            }
+                        }
+                        
+                        
+                        Text("Player")
+                            .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 50:25))
+                            .foregroundStyle(.overYellow)
                     }
+                    
+                    Spacer()
+                    
+                    VStack {
+                        VStack(spacing: 30) {
+                            ZStack {
+                                Image(.diceBg)
+                                    .resizable()
+                                    .scaledToFit()
+                                Text("\(dealerScore)")
+                                    .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 80:40))
+                                    .foregroundStyle(.secondaryGold)
+                                
+                            }.frame(height: 75)
+                            
+                            HStack(spacing: 50) {
+                                ForEach(dealerDice, id: \.self) { die in
+                                    DiceView(value: die)
+                                }
+                            }
+                        }
+                        
+                        
+                        Text("Dealer")
+                            .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 50:25))
+                            .foregroundStyle(.overYellow)
+                    }
+                    
+                    Spacer()
+                    
                 }
-                Text("Очки: \(dealerScore)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            }
-
-            if let result = gameResult {
-                Text(result)
-                    .font(.title)
-                    .foregroundColor(result.contains("выиграли") ? .green : result.contains("ничья") ? .orange : .red)
-                    .padding()
-            }
-
-            // Game Controls
-            if !isGameOver {
-                Button("Бросить Кости") {
-                    rollDice()
+                
+                if !isGameOver {
+                    Button {
+                        rollDice()
+                    } label: {
+                        TextBg(height: 50, text: "Start", textSize: 20)
+                    }
+                    .disabled(isRolling)
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(isRolling) // Disable button while rolling
-            } else {
-                Button("Новая Игра") {
-                    startNewGame()
+                
+            }.padding()
+            
+            if isGameOver {
+                ZStack {
+                    Image(.gameOverBg)
+                        .resizable()
+                        .scaledToFill()
+                        .opacity(0.66)
+                    .ignoresSafeArea()
+                    
+                    VStack {
+                        if playerScore > dealerScore {
+                            Text("WIN!")
+                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .foregroundStyle(.overYellow)
+                        } else if playerScore < dealerScore {
+                            Text("LOSE!")
+                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .foregroundStyle(.overYellow)
+                            
+                        } else {
+                            Text("DRAW!")
+                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .foregroundStyle(.overYellow)
+                        }
+                        
+                        if playerScore > dealerScore {
+                            ZStack {
+                                Image(.moneyBg)
+                                    .resizable()
+                                    .scaledToFit()
+                                HStack {
+                                    Image(.coin)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .padding(.vertical, 5)
+                                    Text("+100")
+                                        .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:25))
+                                        .foregroundStyle(.white)
+                                }
+                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 70:40)
+                        }
+                        
+                        Button {
+                            startNewGame()
+                        } label: {
+                            TextBg(height: 70, text: "NEXT", textSize: 20)
+                            
+                        }
+                        
+                        Button {
+                            presentationMode.wrappedValue.dismiss()
+                        } label: {
+                            TextBg(height: 70, text: "HOME", textSize: 20)
+                            
+                        }
+                    }
+                    
                 }
-                .buttonStyle(.borderedProminent)
             }
-        }
-        .padding()
-        .onAppear(perform: startNewGame)
+            
+            
+        }.background(
+            Image(.appBg)
+                .resizable()
+                .edgesIgnoringSafeArea(.all)
+                .scaledToFill()
+            
+        )
+        
     }
-
+    
     // MARK: - Game Logic
     func startNewGame() {
         playerDice = [1, 1]
@@ -122,15 +266,21 @@ struct DiceGameView: View {
                 playerScore = playerDice.reduce(0, +)
                 dealerScore = dealerDice.reduce(0, +)
 
-                // Determine the result
                 if playerScore > dealerScore {
-                    gameResult = "Вы выиграли!"
+                    user.updateUserXP()
+                    user.updateUserCoins(for: 100)
+                    
+                    winStrike += 1
                 } else if playerScore < dealerScore {
-                    gameResult = "Вы проиграли!"
+                    user.minusUserEnergy(for: 2)
+                    winStrike = 0
                 } else {
-                    gameResult = "Ничья!"
+                    winStrike = 0
                 }
-
+                
+                if winStrike > 5 {
+                    viewModel.achievementTwoDone()
+                }
                 isGameOver = true
                 isRolling = false
             }
@@ -138,20 +288,6 @@ struct DiceGameView: View {
     }
 }
 
-struct DiceView: View {
-    let value: Int
-
-    var body: some View {
-        Image("dice\(value)")
-            .resizable()
-            .scaledToFit()
-            .frame(height: 50)
-            .shadow(radius: 5)
-    }
-}
-
-struct DiceGameView_Previews: PreviewProvider {
-    static var previews: some View {
-        DiceGameView()
-    }
+#Preview {
+    GameDiceView(viewModel: AchievementsViewModel())
 }
