@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "kr_Ace.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
