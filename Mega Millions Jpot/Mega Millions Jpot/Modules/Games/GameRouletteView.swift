@@ -17,6 +17,8 @@ struct GameRouletteView: View {
     @State private var rotationAngle: Double = 0
 
     @State private var gameOver: Bool = false
+    @State private var winStrike: Int = 0
+
     
     let colors = ["White", "Green", "Red"]
     let colorMultipliers = ["Red": 2, "White": 2, "Green": 10]
@@ -237,8 +239,14 @@ struct GameRouletteView: View {
             if resultColor == selectedColor {
                 user.updateUserXP()
                 user.updateUserCoins(for: 100)
+                winStrike += 1
             } else {
                 user.minusUserEnergy(for: 1)
+                winStrike = 0
+            }
+            
+            if winStrike > 5 {
+                viewModel.achievementFourDone()
             }
             
             gameOver = true

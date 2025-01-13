@@ -7,95 +7,249 @@
 
 import SwiftUI
 
+struct Card: Hashable {
+    let value: Int
+    let suit: String
+    let type: String
+}
+
 struct Game21View: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-#Preview {
-    Game21View()
-}
-
-struct BlackjackView: View {
-    @State private var playerCards: [Int] = []
-    @State private var dealerCards: [Int] = []
+    @StateObject var user = User.shared
+    @Environment(\.presentationMode) var presentationMode
+    @ObservedObject var viewModel: AchievementsViewModel
+    
+    @State private var playerCards: [Card] = []
+    @State private var dealerCards: [Card] = []
     @State private var playerScore: Int = 0
     @State private var dealerScore: Int = 0
     @State private var showDealerCards = false
     @State private var gameResult: String? = nil
     @State private var isGameOver = false
-
+    
+    @State private var winStrike: Int = 0
+    
+    let suits = ["pk", "ch", "bb", "kr"]
+    let cardTypes = [
+        "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"
+    ]
+    
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Правила игры \"21\" (Блэкджек)")
-                .font(.title)
-                .multilineTextAlignment(.center)
-                .padding()
-
-            // Dealer Section
+        ZStack {
             VStack {
-                Text("Дилер")
-                    .font(.headline)
                 HStack {
-                    ForEach(dealerCards.indices, id: \.self) { index in
-                        CardView(value: dealerCards[index], hidden: !showDealerCards && index == 0)
+                    Button {
+                        presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        ZStack {
+                            Image(.backBtn)
+                                .resizable()
+                                .scaledToFit()
+                        }
+                        .frame(height: 50)
                     }
-                }
-                if showDealerCards {
-                    Text("Очки: \(dealerScore)")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
-            }
-
-            Divider()
-
-            // Player Section
-            VStack {
-                Text("Игрок")
-                    .font(.headline)
-                HStack {
-                    ForEach(playerCards, id: \.self) { card in
-                        CardView(value: card)
+                    
+                    Spacer()
+                    
+                    ZStack {
+                        Image(.moneyBg)
+                            .resizable()
+                            .scaledToFit()
+                        HStack {
+                            Image(.coin)
+                                .resizable()
+                                .scaledToFit()
+                                .padding(.vertical, 5)
+                            Text("\(user.coins)")
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40 : 25))
+                                .foregroundStyle(.white)
+                        }
                     }
+                    .frame(height: DeviceInfo.shared.deviceType == .pad ? 70 : 40)
+                    
+                    ZStack {
+                        Image(.moneyBg)
+                            .resizable()
+                            .scaledToFit()
+                        HStack {
+                            Image(.line)
+                                .resizable()
+                                .scaledToFit()
+                                .padding(.vertical, 5)
+                            Text("\(user.energy)")
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40 : 25))
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .frame(height: DeviceInfo.shared.deviceType == .pad ? 70 : 40)
+                    
+                    Spacer()
+                    
+                    ZStack {
+                        Image(.backBtn)
+                            .resizable()
+                            .scaledToFit()
+                    }
+                    .frame(height: 50)
+                    .opacity(0)
                 }
-                Text("Очки: \(playerScore)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            }
-
-            if let result = gameResult {
-                Text(result)
-                    .font(.title)
-                    .foregroundColor(result.contains("выиграли") ? .green : .red)
-                    .padding()
-            }
-
-            // Game Controls
-            if !isGameOver {
+                .padding(.bottom)
+                
                 HStack {
-                    Button("More") {
+                    Spacer()
+                    Image("cardBack")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 95)
+                        .opacity(0)
+                    Spacer()
+                    // Dealer Section
+                    VStack {
+                        Text("Dealer")
+                            .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 50:25))
+                            .foregroundStyle(.overYellow)
+                        HStack {
+                            ForEach(dealerCards, id: \.self) { card in
+                                CardView(card: card, hidden: !showDealerCards && dealerCards.first == card)
+                            }
+                        }
+                        if showDealerCards {
+                            Text("Очки: \(dealerScore)")
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 36:18))
+                                .foregroundStyle(.overYellow)
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    // Player Section
+                    VStack {
+                        Text("Player")
+                            .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 50:25))
+                            .foregroundStyle(.overYellow)
+                        HStack {
+                            ForEach(playerCards, id: \.self) { card in
+                                CardView(card: card)
+                            }
+                        }
+                        if showDealerCards {
+                            Text("Очки: \(playerScore)")
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 36:18))
+                                .foregroundStyle(.overYellow)
+                        }
+                    }
+                    Spacer()
+                    Image("cardBack")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 95)
+                    Spacer()
+                }
+                
+                
+                
+                HStack {
+                    
+                    
+                    Button {
                         dealCard(toPlayer: true)
+                    } label: {
+                        ZStack {
+                            Image(.diceBg)
+                                .resizable()
+                                .scaledToFit()
+                            Text("More")
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
+                                .foregroundStyle(.secondaryGold)
+                        }.frame(height: 40)
                     }
-                    .buttonStyle(.borderedProminent)
-
-                    Button("Stand") {
+                    
+                    Button {
                         endPlayerTurn()
+                    }  label: {
+                        ZStack {
+                            Image(.diceBg)
+                                .resizable()
+                                .scaledToFit()
+                            Text("Stand")
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
+                                .foregroundStyle(.secondaryGold)
+                        }.frame(height: 40)
                     }
-                    .buttonStyle(.bordered)
                 }
-            } else {
-                Button("Новая Игра") {
-                    startNewGame()
+                
+                //                else {
+                //                    Button("Новая Игра") {
+                //                        startNewGame()
+                //                    }
+                //                    .buttonStyle(.borderedProminent)
+                //                }
+                Spacer()
+            }
+            .padding()
+            .onAppear(perform: startNewGame)
+            
+            if isGameOver {
+                ZStack {
+                    Image(.gameOverBg)
+                        .resizable()
+                        .scaledToFill()
+                        .opacity(0.66)
+                        .ignoresSafeArea()
+                    
+                    VStack {
+                        
+                        if dealerScore > 21 {
+                            Text("WIN!")
+                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .foregroundStyle(.overYellow)
+                        } else if playerScore > dealerScore {
+                            Text("WIN!")
+                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .foregroundStyle(.overYellow)
+                        } else if playerScore == dealerScore {
+                            Text("DRAW!")
+                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .foregroundStyle(.overYellow)
+                        } else {
+                            Text("LOSE!")
+                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .foregroundStyle(.overYellow)
+                        }
+                        
+                        
+                        ZStack {
+                            Image("21gameOver")
+                                .resizable()
+                                .scaledToFit()
+                            
+                        }.frame(height: DeviceInfo.shared.deviceType == .pad ? 200:100)
+                        
+                        
+                        Button {
+                            startNewGame()
+                        } label: {
+                            TextBg(height: 70, text: "NEXT", textSize: 20)
+                        }
+                        
+                        Button {
+                            presentationMode.wrappedValue.dismiss()
+                        } label: {
+                            TextBg(height: 70, text: "HOME", textSize: 20)
+                            
+                        }
+                    }
+                    
                 }
-                .buttonStyle(.borderedProminent)
             }
         }
-        .padding()
-        .onAppear(perform: startNewGame)
+        .background(
+            Image(.appBg)
+                .resizable()
+                .edgesIgnoringSafeArea(.all)
+                .scaledToFill()
+        )
     }
-
+    
     // MARK: - Game Logic
     func startNewGame() {
         playerCards = []
@@ -105,98 +259,111 @@ struct BlackjackView: View {
         showDealerCards = false
         gameResult = nil
         isGameOver = false
-
+        
         // Deal initial cards
         dealCard(toPlayer: true)
         dealCard(toPlayer: true)
         dealCard(toPlayer: false)
         dealCard(toPlayer: false)
     }
-
+    
     func dealCard(toPlayer: Bool) {
         let card = drawCard()
         if toPlayer {
             playerCards.append(card)
             playerScore = calculateScore(for: playerCards)
-
+            
             if playerScore > 21 {
                 gameResult = "Перебор! Вы проиграли."
-                isGameOver = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    isGameOver = true
+                }
             }
         } else {
             dealerCards.append(card)
             dealerScore = calculateScore(for: dealerCards)
         }
     }
-
+    
     func endPlayerTurn() {
         showDealerCards = true
-
+        
         // Dealer's turn: dealer must draw until their score is 17 or more
         while dealerScore < 17 {
             dealCard(toPlayer: false)
         }
-
+        
         // Determine the result
         if dealerScore > 21 {
-            gameResult = "Дилер перебрал! Вы выиграли."
+            winStrike += 1
         } else if playerScore > dealerScore {
-            gameResult = "Вы выиграли!"
+            winStrike += 1
         } else if playerScore == dealerScore {
-            gameResult = "Ничья!"
+            winStrike = 0
         } else {
-            gameResult = "Вы проиграли!"
+            winStrike = 0
         }
-
-        isGameOver = true
+        
+        if winStrike > 5 {
+            viewModel.achievementThreeDone()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            isGameOver = true
+        }
     }
-
-    func drawCard() -> Int {
-        let cardValues = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11] // 2-10, J, Q, K, A
-        return cardValues.randomElement()!
+    
+    func drawCard() -> Card {
+        let randomSuit = suits.randomElement()! // Случайная масть
+        let randomType = cardTypes.randomElement()! // Случайный тип карты
+        
+        // Определяем значение карты в зависимости от типа
+        let value: Int
+        switch randomType {
+        case "Jack", "Queen", "King":
+            value = 10 // Валет, Дама, Король — по 10 очков
+        case "Ace":
+            value = 11 // Туз — 11 очков
+        default:
+            value = Int(randomType)! // Остальные карты — их числовое значение
+        }
+        
+        return Card(value: value, suit: randomSuit, type: randomType)
     }
-
-    func calculateScore(for cards: [Int]) -> Int {
-        var total = cards.reduce(0, +)
-        var aceCount = cards.filter { $0 == 11 }.count
-
+    
+    func calculateScore(for cards: [Card]) -> Int {
+        var total = cards.map { $0.value }.reduce(0, +)
+        var aceCount = cards.filter { $0.value == 11 }.count
+        
         // Adjust for Aces if total exceeds 21
         while total > 21 && aceCount > 0 {
             total -= 10
             aceCount -= 1
         }
-
+        
         return total
     }
 }
 
 struct CardView: View {
-    let value: Int
-    let hidden: Bool
-
+    let card: Card
+    var hidden: Bool = false
+    
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(hidden ? Color.gray : Color.white)
-                .frame(width: 50, height: 70)
-                .shadow(radius: 5)
-
-            if !hidden {
-                Text("\(value)")
-                    .font(.headline)
-                    .foregroundColor(.black)
-            }
+        if hidden {
+            Image("cardBack")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 95)
+        } else {
+            Image("\(card.suit)_\(card.type)")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 95)
         }
-    }
-
-    init(value: Int, hidden: Bool = false) {
-        self.value = value
-        self.hidden = hidden
     }
 }
 
-struct BlackjackView_Previews: PreviewProvider {
-    static var previews: some View {
-        BlackjackView()
-    }
+#Preview {
+    Game21View(viewModel: AchievementsViewModel())
 }

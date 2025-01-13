@@ -180,7 +180,7 @@ struct GamesView: View {
             
         )
         .fullScreenCover(isPresented: $showGame1) {
-            DailyRouletteView()
+            Game21View(viewModel: viewModel)
         }
         .fullScreenCover(isPresented: $showGame2) {
             GameRouletteView(viewModel: viewModel)
