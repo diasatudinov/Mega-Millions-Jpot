@@ -1,3 +1,11 @@
+//
+//  WV.swift
+//  Mega Millions Jpot
+//
+//  Created by Dias Atudinov on 13.01.2025.
+//
+
+
 import SwiftUI
 import WebKit
 
