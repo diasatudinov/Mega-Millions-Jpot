@@ -11,7 +11,7 @@ import SwiftUI
 struct Mega_Millions_JpotApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }

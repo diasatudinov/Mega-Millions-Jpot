@@ -273,18 +273,18 @@ struct MenuView: View {
                 .onReceive(timer) { _ in
                     updateTimer()
                 }
-//                .onAppear {
-//                    if settingsVM.musicEnabled {
-//                        MusicPlayer.shared.playBackgroundMusic()
-//                    }
-//                }
-//                .onChange(of: settingsVM.musicEnabled) { enabled in
-//                    if enabled {
-//                        MusicPlayer.shared.playBackgroundMusic()
-//                    } else {
-//                        MusicPlayer.shared.stopBackgroundMusic()
-//                    }
-//                }
+                .onAppear {
+                    if settingsVM.musicEnabled {
+                        MusicPlayer.shared.playBackgroundMusic()
+                    }
+                }
+                .onChange(of: settingsVM.musicEnabled) { enabled in
+                    if enabled {
+                        MusicPlayer.shared.playBackgroundMusic()
+                    } else {
+                        MusicPlayer.shared.stopBackgroundMusic()
+                    }
+                }
                 .onChange(of: user.coins)  { newValue in
                     if newValue > 10000 {
                         achivementsVM.achievementOneDone()
@@ -294,7 +294,7 @@ struct MenuView: View {
                     DailyRouletteView()
                 }
                 .fullScreenCover(isPresented: $showGames) {
-                    GamesView(viewModel: achivementsVM)
+                    GamesView(viewModel: achivementsVM, settingsVM: settingsVM)
                 }
                 .fullScreenCover(isPresented: $showAchivements) {
                     AchievementsView(viewModel: achivementsVM)
@@ -317,7 +317,7 @@ struct MenuView: View {
         }
         
         let now = Date()
-        let totalDuration: TimeInterval = 24 * 60 * 60
+        let totalDuration: TimeInterval = 5 * 60
         let elapsedTime = now.timeIntervalSince(lastPressDate)
         let remainingTime = totalDuration - elapsedTime
         
@@ -326,8 +326,8 @@ struct MenuView: View {
             timerActive = false
         } else {
             timerActive = true
-            let hours = Int(remainingTime) / 3600
-            let minutes = (Int(remainingTime) % 3600) / 60
+            let hours =  (Int(remainingTime) % 3600) / 60
+            let minutes =  (Int(remainingTime) % 60)
             timeRemaining = String(format: "%02d:%02d", hours, minutes)
         }
     }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct Card: Hashable {
     let value: Int
@@ -17,6 +18,7 @@ struct Game21View: View {
     @StateObject var user = User.shared
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: AchievementsViewModel
+    @ObservedObject var settingsVM: SettingsModel
     
     @State private var playerCards: [Card] = []
     @State private var dealerCards: [Card] = []
@@ -27,7 +29,8 @@ struct Game21View: View {
     @State private var isGameOver = false
     
     @State private var winStrike: Int = 0
-    
+    @State private var audioPlayer: AVAudioPlayer?
+
     let suits = ["pk", "ch", "bb", "kr"]
     let cardTypes = [
         "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"
@@ -151,6 +154,7 @@ struct Game21View: View {
                     
                     
                     Button {
+                        playSound(named: "flipcard")
                         dealCard(toPlayer: true)
                     } label: {
                         ZStack {
@@ -164,6 +168,7 @@ struct Game21View: View {
                     }
                     
                     Button {
+                        playSound(named: "takeStar")
                         endPlayerTurn()
                     }  label: {
                         ZStack {
@@ -177,12 +182,6 @@ struct Game21View: View {
                     }
                 }
                 
-                //                else {
-                //                    Button("Новая Игра") {
-                //                        startNewGame()
-                //                    }
-                //                    .buttonStyle(.borderedProminent)
-                //                }
                 Spacer()
             }
             .padding()
@@ -295,12 +294,17 @@ struct Game21View: View {
         
         // Determine the result
         if dealerScore > 21 {
+            user.updateUserXP()
+            user.updateUserCoins(for: 100)
             winStrike += 1
         } else if playerScore > dealerScore {
+            user.updateUserXP()
+            user.updateUserCoins(for: 100)
             winStrike += 1
         } else if playerScore == dealerScore {
             winStrike = 0
         } else {
+            user.minusUserEnergy(for: 1)
             winStrike = 0
         }
         
@@ -343,6 +347,20 @@ struct Game21View: View {
         
         return total
     }
+    
+    func playSound(named soundName: String) {
+        if settingsVM.soundEnabled {
+            if let url = Bundle.main.url(forResource: soundName, withExtension: "mp3") {
+                do {
+                    audioPlayer = try AVAudioPlayer(contentsOf: url)
+                    audioPlayer?.play()
+                } catch {
+                    print("Error playing sound: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
 }
 
 struct CardView: View {
@@ -365,5 +383,5 @@ struct CardView: View {
 }
 
 #Preview {
-    Game21View(viewModel: AchievementsViewModel())
+    Game21View(viewModel: AchievementsViewModel(), settingsVM: SettingsModel())
 }

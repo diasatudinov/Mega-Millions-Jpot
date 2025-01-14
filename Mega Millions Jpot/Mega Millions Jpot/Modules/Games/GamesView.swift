@@ -16,6 +16,7 @@ struct GamesView: View {
     @State private var showGame3 = false
     
     @ObservedObject var viewModel: AchievementsViewModel
+    @ObservedObject var settingsVM: SettingsModel
     var body: some View {
         ZStack {
             VStack {
@@ -180,17 +181,17 @@ struct GamesView: View {
             
         )
         .fullScreenCover(isPresented: $showGame1) {
-            Game21View(viewModel: viewModel)
+            Game21View(viewModel: viewModel, settingsVM: settingsVM)
         }
         .fullScreenCover(isPresented: $showGame2) {
-            GameRouletteView(viewModel: viewModel)
+            GameRouletteView(viewModel: viewModel, settingsVM: settingsVM)
         }
         .fullScreenCover(isPresented: $showGame3) {
-            GameDiceView(viewModel: viewModel)
+            GameDiceView(viewModel: viewModel, settingsVM: settingsVM)
         }
     }
 }
 
 #Preview {
-    GamesView(viewModel: AchievementsViewModel())
+    GamesView(viewModel: AchievementsViewModel(), settingsVM: SettingsModel())
 }

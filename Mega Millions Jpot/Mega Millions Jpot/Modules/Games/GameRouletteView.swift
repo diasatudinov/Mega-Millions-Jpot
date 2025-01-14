@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct GameRouletteView: View {
     @StateObject var user = User.shared
@@ -24,7 +25,9 @@ struct GameRouletteView: View {
     let colorMultipliers = ["Red": 2, "White": 2, "Green": 10]
     
     @ObservedObject var viewModel: AchievementsViewModel
-    
+    @ObservedObject var settingsVM: SettingsModel
+    @State private var audioPlayer: AVAudioPlayer?
+
     var body: some View {
         ZStack {
             VStack {
@@ -112,7 +115,10 @@ struct GameRouletteView: View {
                             }
                         }.frame(height: 150)
                         
-                        Button(action: spinRoulette) {
+                        Button {
+                            playSound(named: "takeStar")
+                            spinRoulette()
+                    }label:{
                             TextBg(height: 70, text: "START", textSize: 16)
                                 .opacity(selectedColor != nil ? 1 : 0.5)
                             
@@ -254,8 +260,21 @@ struct GameRouletteView: View {
         }
     }
     
+    func playSound(named soundName: String) {
+        if settingsVM.soundEnabled {
+            if let url = Bundle.main.url(forResource: soundName, withExtension: "mp3") {
+                do {
+                    audioPlayer = try AVAudioPlayer(contentsOf: url)
+                    audioPlayer?.play()
+                } catch {
+                    print("Error playing sound: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
 }
 
 #Preview {
-    GameRouletteView(viewModel: AchievementsViewModel())
+    GameRouletteView(viewModel: AchievementsViewModel(), settingsVM: SettingsModel())
 }

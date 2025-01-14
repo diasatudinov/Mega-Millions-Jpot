@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import AVFoundation
+
 
 struct DiceView: View {
     let value: Int
@@ -32,9 +34,10 @@ struct GameDiceView: View {
     @State private var isGameOver = false
     @State private var isRolling = false
     @State private var winStrike: Int = 0
-    
+    @State private var audioPlayer: AVAudioPlayer?
+
     @ObservedObject var viewModel: AchievementsViewModel
-    
+    @ObservedObject var settingsVM: SettingsModel
     var body: some View {
         ZStack {
             VStack {
@@ -153,6 +156,7 @@ struct GameDiceView: View {
                 
                 if !isGameOver {
                     Button {
+                        playSound(named: "takeStar")
                         rollDice()
                     } label: {
                         TextBg(height: 50, text: "Start", textSize: 20)
@@ -286,8 +290,21 @@ struct GameDiceView: View {
             }
         }
     }
+    
+    func playSound(named soundName: String) {
+        if settingsVM.soundEnabled {
+            if let url = Bundle.main.url(forResource: soundName, withExtension: "mp3") {
+                do {
+                    audioPlayer = try AVAudioPlayer(contentsOf: url)
+                    audioPlayer?.play()
+                } catch {
+                    print("Error playing sound: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
 }
 
 #Preview {
-    GameDiceView(viewModel: AchievementsViewModel())
+    GameDiceView(viewModel: AchievementsViewModel(), settingsVM: SettingsModel())
 }
