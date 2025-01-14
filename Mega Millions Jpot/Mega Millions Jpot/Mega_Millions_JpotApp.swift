@@ -9,6 +9,9 @@ import SwiftUI
 
 @main
 struct Mega_Millions_JpotApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
             RootView()
