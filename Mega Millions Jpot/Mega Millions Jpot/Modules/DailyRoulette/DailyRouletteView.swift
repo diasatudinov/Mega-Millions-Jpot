@@ -135,7 +135,7 @@ struct DailyRouletteView: View {
         isButtonDisabled = true // Disable button
         
 //        // Optionally refresh button state after 24 hours
-        DispatchQueue.main.asyncAfter(deadline: .now() + 24 * 60 * 60) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5 * 60) {
             checkButtonState()
         }
     }
@@ -144,7 +144,7 @@ struct DailyRouletteView: View {
        
         if let savedDate = UserDefaults.standard.object(forKey: "LastPressDate") as? Date {
             let elapsedTime = Date().timeIntervalSince(savedDate)
-            if elapsedTime >= 24 * 60 * 60 {
+            if elapsedTime >= 5 * 60 {
                 isButtonDisabled = false // Re-enable button
             } else {
                 isButtonDisabled = true
