@@ -89,25 +89,25 @@ struct GamesView: View {
                             Image(.gameIcon1)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 60)
+                                .frame(height: DeviceInfo.shared.deviceType == .pad ? 120:60)
                                 .padding(.bottom)
                             HStack {
                                 Image(.line)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(height: 20)
+                                    .frame(height: DeviceInfo.shared.deviceType == .pad ? 40:20)
                                 Text("1")
-                                    .font(.custom(Fonts.regular.rawValue, size: 20))
+                                    .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
                                     .foregroundStyle(.yellow)
-                            }.padding(.bottom, 10)
+                            }.padding(.bottom, DeviceInfo.shared.deviceType == .pad ? 20:10)
                             
                             Button {
                                 showGame1 = true
                             } label: {
-                                TextBg(height: 50, text: "PLAY", textSize: 16)
+                                TextBg(height: DeviceInfo.shared.deviceType == .pad ? 100:50, text: "PLAY", textSize: DeviceInfo.shared.deviceType == .pad ? 32:16)
                             }
                         }.padding(.vertical)
-                    }.frame(height: 230)
+                    }.frame(height: DeviceInfo.shared.deviceType == .pad ? 450:230)
                     
                     ZStack {
                         Image(.gameBg)
@@ -119,25 +119,25 @@ struct GamesView: View {
                             Image(.gameIcon2)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 90)
+                                .frame(height: DeviceInfo.shared.deviceType == .pad ? 180:90)
                                 .padding(.bottom)
                             HStack {
                                 Image(.line)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(height: 20)
+                                    .frame(height: DeviceInfo.shared.deviceType == .pad ? 40:20)
                                 Text("1")
-                                    .font(.custom(Fonts.regular.rawValue, size: 20))
+                                    .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
                                     .foregroundStyle(.yellow)
-                            }.padding(.bottom, 10)
+                            }.padding(.bottom, DeviceInfo.shared.deviceType == .pad ? 20:10)
                             
                             Button {
                                 showGame2 = true
                             } label: {
-                                TextBg(height: 50, text: "PLAY", textSize: 16)
+                                TextBg(height: DeviceInfo.shared.deviceType == .pad ? 100:50, text: "PLAY", textSize: DeviceInfo.shared.deviceType == .pad ? 32:16)
                             }
                         }.padding(.vertical)
-                    }.frame(height: 230)
+                    }.frame(height: DeviceInfo.shared.deviceType == .pad ? 450:230)
                     
                     ZStack {
                         Image(.gameBg)
@@ -149,25 +149,25 @@ struct GamesView: View {
                             Image(.gameIcon3)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 80)
+                                .frame(height: DeviceInfo.shared.deviceType == .pad ? 160:80)
                                 .padding(.bottom)
                             HStack {
                                 Image(.line)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(height: 20)
+                                    .frame(height: DeviceInfo.shared.deviceType == .pad ? 40:20)
                                 Text("2")
-                                    .font(.custom(Fonts.regular.rawValue, size: 20))
+                                    .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
                                     .foregroundStyle(.yellow)
-                            }.padding(.bottom, 10)
+                            }.padding(.bottom, DeviceInfo.shared.deviceType == .pad ? 20:10)
                             
                             Button {
                                 showGame3 = true
                             } label: {
-                                TextBg(height: 50, text: "PLAY", textSize: 16)
+                                TextBg(height: DeviceInfo.shared.deviceType == .pad ? 100:50, text: "PLAY", textSize: DeviceInfo.shared.deviceType == .pad ? 32:16)
                             }
                         }.padding(.vertical)
-                    }.frame(height: 230)
+                    }.frame(height: DeviceInfo.shared.deviceType == .pad ? 450:230)
                 }
                 
                 Spacer()
@@ -190,6 +190,7 @@ struct GamesView: View {
             GameDiceView(viewModel: viewModel, settingsVM: settingsVM)
         }
     }
+    
 }
 
 #Preview {

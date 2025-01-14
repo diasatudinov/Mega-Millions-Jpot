@@ -102,7 +102,7 @@ struct Game21View: View {
                     Image("cardBack")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 95)
+                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 200:95)
                         .opacity(0)
                     Spacer()
                     // Dealer Section
@@ -144,7 +144,7 @@ struct Game21View: View {
                     Image("cardBack")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 95)
+                        .frame(height: DeviceInfo.shared.deviceType == .pad ? 200:95)
                     Spacer()
                 }
                 
@@ -164,7 +164,7 @@ struct Game21View: View {
                             Text("More")
                                 .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
                                 .foregroundStyle(.secondaryGold)
-                        }.frame(height: 40)
+                        }.frame(height: DeviceInfo.shared.deviceType == .pad ? 80:40)
                     }
                     
                     Button {
@@ -178,7 +178,7 @@ struct Game21View: View {
                             Text("Stand")
                                 .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 40:20))
                                 .foregroundStyle(.secondaryGold)
-                        }.frame(height: 40)
+                        }.frame(height: DeviceInfo.shared.deviceType == .pad ? 80:40)
                     }
                 }
                 
@@ -199,6 +199,10 @@ struct Game21View: View {
                         
                         if dealerScore > 21 {
                             Text("WIN!")
+                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .foregroundStyle(.overYellow)
+                        } else if playerScore > 21 {
+                            Text("LOSE!")
                                 .font(.custom(Fonts.regular.rawValue, size: 50))
                                 .foregroundStyle(.overYellow)
                         } else if playerScore > dealerScore {
@@ -227,13 +231,13 @@ struct Game21View: View {
                         Button {
                             startNewGame()
                         } label: {
-                            TextBg(height: 70, text: "NEXT", textSize: 20)
+                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140:70, text: "NEXT", textSize: DeviceInfo.shared.deviceType == .pad ? 40:20)
                         }
                         
                         Button {
                             presentationMode.wrappedValue.dismiss()
                         } label: {
-                            TextBg(height: 70, text: "HOME", textSize: 20)
+                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140:70, text: "HOME", textSize: DeviceInfo.shared.deviceType == .pad ? 40:20)
                             
                         }
                     }
@@ -297,6 +301,10 @@ struct Game21View: View {
             user.updateUserXP()
             user.updateUserCoins(for: 100)
             winStrike += 1
+        } else if playerScore > 21 {
+            user.minusUserEnergy(for: 1)
+            winStrike = 0
+            
         } else if playerScore > dealerScore {
             user.updateUserXP()
             user.updateUserCoins(for: 100)
@@ -372,12 +380,12 @@ struct CardView: View {
             Image("cardBack")
                 .resizable()
                 .scaledToFit()
-                .frame(height: 95)
+                .frame(height: DeviceInfo.shared.deviceType == .pad ? 200:95)
         } else {
             Image("\(card.suit)_\(card.type)")
                 .resizable()
                 .scaledToFit()
-                .frame(height: 95)
+                .frame(height: DeviceInfo.shared.deviceType == .pad ? 200:95)
         }
     }
 }

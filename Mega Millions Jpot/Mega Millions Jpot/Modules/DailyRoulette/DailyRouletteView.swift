@@ -28,7 +28,7 @@ struct DailyRouletteView: View {
                     Button {
                         handleButtonPress()
                     } label: {
-                        TextBg(height: 70, text: "START", textSize: 16)
+                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140:70, text: "START", textSize: DeviceInfo.shared.deviceType == .pad ? 32:16)
                             .opacity(isButtonDisabled ? 0.5 : 1.0)
                     } .disabled(isButtonDisabled)
                     Spacer()
@@ -45,14 +45,14 @@ struct DailyRouletteView: View {
                                 Image(.spinnerTriangle)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(height: 100)
+                                    .frame(height: DeviceInfo.shared.deviceType == .pad ? 200:100)
                                 Spacer()
                             }
-                        }.frame(width: 300, height: 350)
+                        }.frame(width: DeviceInfo.shared.deviceType == .pad ? 500:300, height: DeviceInfo.shared.deviceType == .pad ? 650:350)
                         
                     }
                     Spacer()
-                    TextBg(height: 70, text: "START", textSize: 16)
+                    TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140:70, text: "START", textSize: DeviceInfo.shared.deviceType == .pad ? 32:16)
                         .opacity(0)
                 }
                 

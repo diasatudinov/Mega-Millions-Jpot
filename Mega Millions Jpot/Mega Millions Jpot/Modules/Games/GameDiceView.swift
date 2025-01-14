@@ -16,7 +16,7 @@ struct DiceView: View {
         Image("dice\(value)")
             .resizable()
             .scaledToFit()
-            .frame(height: 85)
+            .frame(height: DeviceInfo.shared.deviceType == .pad ? 160:85)
             .shadow(radius: 5)
     }
 }
@@ -96,6 +96,7 @@ struct GameDiceView: View {
                     }.frame(height: 50).opacity(0)
                 }.padding(.bottom)
 
+                Spacer()
                 HStack {
                     Spacer()
                     VStack {
@@ -108,9 +109,9 @@ struct GameDiceView: View {
                                     .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 80:40))
                                     .foregroundStyle(.secondaryGold)
                                 
-                            }.frame(height: 75)
+                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 130:75)
                             
-                            HStack(spacing: 50) {
+                            HStack(spacing: DeviceInfo.shared.deviceType == .pad ? 100:50) {
                                 ForEach(playerDice, id: \.self) { die in
                                     DiceView(value: die)
                                 }
@@ -135,9 +136,9 @@ struct GameDiceView: View {
                                     .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 80:40))
                                     .foregroundStyle(.secondaryGold)
                                 
-                            }.frame(height: 75)
+                            }.frame(height: DeviceInfo.shared.deviceType == .pad ? 130:75)
                             
-                            HStack(spacing: 50) {
+                            HStack(spacing: DeviceInfo.shared.deviceType == .pad ? 100:50) {
                                 ForEach(dealerDice, id: \.self) { die in
                                     DiceView(value: die)
                                 }
@@ -155,15 +156,16 @@ struct GameDiceView: View {
                 }
                 
                 if !isGameOver {
+                    Spacer()
                     Button {
                         playSound(named: "takeStar")
                         rollDice()
                     } label: {
-                        TextBg(height: 50, text: "Start", textSize: 20)
+                        TextBg(height: DeviceInfo.shared.deviceType == .pad ? 100:50, text: "Start", textSize: DeviceInfo.shared.deviceType == .pad ? 40:20)
                     }
                     .disabled(isRolling)
                 }
-                
+                Spacer()
             }.padding()
             
             if isGameOver {
@@ -177,16 +179,16 @@ struct GameDiceView: View {
                     VStack {
                         if playerScore > dealerScore {
                             Text("WIN!")
-                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 100:50))
                                 .foregroundStyle(.overYellow)
                         } else if playerScore < dealerScore {
                             Text("LOSE!")
-                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 100:50))
                                 .foregroundStyle(.overYellow)
                             
                         } else {
                             Text("DRAW!")
-                                .font(.custom(Fonts.regular.rawValue, size: 50))
+                                .font(.custom(Fonts.regular.rawValue, size: DeviceInfo.shared.deviceType == .pad ? 100:50))
                                 .foregroundStyle(.overYellow)
                         }
                         
@@ -210,14 +212,14 @@ struct GameDiceView: View {
                         Button {
                             startNewGame()
                         } label: {
-                            TextBg(height: 70, text: "NEXT", textSize: 20)
+                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140:70, text: "NEXT", textSize: DeviceInfo.shared.deviceType == .pad ? 40:20)
                             
                         }
                         
                         Button {
                             presentationMode.wrappedValue.dismiss()
                         } label: {
-                            TextBg(height: 70, text: "HOME", textSize: 20)
+                            TextBg(height: DeviceInfo.shared.deviceType == .pad ? 140:70, text: "HOME", textSize: DeviceInfo.shared.deviceType == .pad ? 40:20)
                             
                         }
                     }
